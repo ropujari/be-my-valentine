@@ -1,9 +1,30 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Be My Valentine</title>
+    <style>
+        .no-button {
+            position: relative;
+            transition: all 0.3s;
+        }
+        .no-button:hover {
+            position: relative;
+            left: 100px;
+            top: 5px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Happy Valentine's Day</h1>
-    <p>Will you be my valentine bujji?</p>
+    <h1>Will you be my valentine bujji?</h1>
+    <button id="yes-button">Yes</button>
+    <button class="no-button">No</button>
+    <div id="photo-container" style="display:none;"><img src="path_to_your_photo.jpg" alt="Your Valentine Photo" /></div>
+    <script>
+        document.getElementById('yes-button').onclick = function() {
+            document.getElementById('photo-container').style.display = 'block';
+        };
+    </script>
 </body>
 </html>
