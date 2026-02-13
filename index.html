@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Be My Valentine</title>
+    <title>Will You Be My Valentine?</title>
     <style>
         * {
             margin: 0;
@@ -38,6 +38,12 @@
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
 
+        .hearts {
+            font-size: 2rem;
+            margin: 20px 0;
+            letter-spacing: 10px;
+        }
+
         button {
             padding: 15px 40px;
             font-size: 1.2rem;
@@ -48,17 +54,37 @@
             font-weight: bold;
             transition: all 0.3s ease;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        #yesBtn {
             background-color: #ff1744;
             color: white;
         }
 
-        button:hover {
+        #yesBtn:hover {
             background-color: #d91e63;
             transform: scale(1.1);
         }
 
-        #gifContainer {
+        #noBtn {
+            background-color: #ffb3ba;
+            color: #333;
+            position: fixed;
+        }
+
+        #noBtn:hover {
+            transform: scale(1.05);
+        }
+
+        .page {
             display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        #gifContainer {
             margin-top: 20px;
         }
 
@@ -66,21 +92,105 @@
             max-width: 100%;
             border-radius: 10px;
         }
+
+        .hearts-animation {
+            position: fixed;
+            pointer-events: none;
+            font-size: 2rem;
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>You choose right! 😎💕</h1>
-        <button id="yesButton">Yes</button>
-        <div id="gifContainer">
-            <img src="giphy.gif" alt="Giphy GIF">
+        <!-- Page 1: Question -->
+        <div id="page1" class="page active">
+            <div class="hearts">💕 💖 💗</div>
+            <h1>Will you be my valentine bujji?</h1>
+            <div class="hearts">💕 💖 💗</div>
+            
+            <button id="yesBtn">Yes 💕</button>
+            <button id="noBtn">No 💔</button>
+        </div>
+
+        <!-- Page 2: Result -->
+        <div id="page2" class="page">
+            <h1>You choose right! 😎💕</h1>
+            <div id="gifContainer">
+                <img src="giphy.gif" alt="Giphy GIF">
+            </div>
         </div>
     </div>
 
     <script>
-        document.getElementById('yesButton').onclick = function() {
-            document.getElementById('gifContainer').style.display = 'block';
-        };
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const page1 = document.getElementById('page1');
+        const page2 = document.getElementById('page2');
+
+        // Position the No button initially
+        function randomizeNoPosition() {
+            const maxX = window.innerWidth - noBtn.offsetWidth - 20;
+            const maxY = window.innerHeight - noBtn.offsetHeight - 20;
+
+            let newX = Math.random() * maxX;
+            let newY = Math.random() * maxY;
+
+            newX = Math.max(20, Math.min(maxX, newX));
+            newY = Math.max(20, Math.min(maxY, newY));
+
+            noBtn.style.left = newX + 'px';
+            noBtn.style.top = newY + 'px';
+        }
+
+        // Initialize button position on load
+        window.addEventListener('load', () => {
+            randomizeNoPosition();
+        });
+
+        // Make "No" button run away when cursor gets close
+        document.addEventListener('mousemove', (e) => {
+            const rect = noBtn.getBoundingClientRect();
+            const distance = Math.hypot(
+                e.clientX - (rect.left + rect.width / 2),
+                e.clientY - (rect.top + rect.height / 2)
+            );
+            
+            if (distance < 120) {
+                randomizeNoPosition();
+            }
+        });
+
+        // Yes button click
+        yesBtn.addEventListener('click', () => {
+            page1.classList.remove('active');
+            page2.classList.add('active');
+            createHeartAnimation();
+        });
+
+        // Create falling hearts animation
+        function createHeartAnimation() {
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'hearts-animation';
+                    heart.innerHTML = '💕';
+                    heart.style.left = Math.random() * window.innerWidth + 'px';
+                    heart.style.top = '-50px';
+                    document.body.appendChild(heart);
+
+                    let pos = -50;
+                    const interval = setInterval(() => {
+                        pos += 3;
+                        heart.style.top = pos + 'px';
+                        if (pos > window.innerHeight) {
+                            clearInterval(interval);
+                            heart.remove();
+                        }
+                    }, 30);
+                }, i * 100);
+            }
+        }
     </script>
 </body>
 </html>
