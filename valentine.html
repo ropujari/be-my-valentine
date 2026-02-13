@@ -71,7 +71,7 @@
     #noBtn {
       background: #e74c3c;
       color: white;
-      position: relative;
+      position: fixed;
       transition: all 0.2s;
     }
 
@@ -115,7 +115,8 @@
       <button id="noBtn">No 😢</button>
     </div>
 
-    <img id="photo" src="https://via.placeholder.com/600x800/FFB6C1/FFFFFF?text=Screenshot 2026-02-09 142718.png" alt="Happy moment of us">
+    <!-- CHANGE THIS LINE - Replace with your actual photo URL -->
+    <img id="photo" src="./photo.jpg" alt="Happy moment">
     
     <div id="message" style="display:none; font-size:1.8rem; color:#e74c3c; margin-top:20px; font-weight:bold;">
       Yayyyy! I knew you'd say yes! 🥰💃<br>
@@ -144,56 +145,45 @@
     const photo = document.getElementById('photo');
     const message = document.getElementById('message');
 
-    // Make "No" run away when mouse approaches
-    noBtn.addEventListener('mouseover', () => {
-      const containerRect = document.querySelector('.container').getBoundingClientRect();
-      const maxX = window.innerWidth - noBtn.offsetWidth - 40;
-      const maxY = window.innerHeight - noBtn.offsetHeight - 40;
+    // Position the No button initially
+    function randomizeNoPosition() {
+      const maxX = window.innerWidth - noBtn.offsetWidth - 20;
+      const maxY = window.innerHeight - noBtn.offsetHeight - 20;
 
       let newX = Math.random() * maxX;
       let newY = Math.random() * maxY;
 
-      // Try to keep it somewhat visible but annoying
-      if (newX < containerRect.left + 100) newX = containerRect.left + 100 + Math.random() * 200;
-      if (newX > containerRect.right - 100) newX = containerRect.right - 300;
+      newX = Math.max(20, Math.min(maxX, newX));
+      newY = Math.max(20, Math.min(maxY, newY));
 
-      noBtn.style.position = 'fixed';
       noBtn.style.left = newX + 'px';
       noBtn.style.top = newY + 'px';
-      noBtn.style.transform = 'scale(0.9)';
-    });
+    }
 
-    // Optional: make it even harder by moving on mousemove near it
+    // Make "No" run away when cursor gets close
     document.addEventListener('mousemove', (e) => {
       const rect = noBtn.getBoundingClientRect();
-      const distance = Math.hypot(e.clientX - (rect.left + rect.width/2), e.clientY - (rect.top + rect.height/2));
+      const distance = Math.hypot(
+        e.clientX - (rect.left + rect.width / 2),
+        e.clientY - (rect.top + rect.height / 2)
+      );
       
-      if (distance < 120) {
-        const angle = Math.atan2(e.clientY - (rect.top + rect.height/2), e.clientX - (rect.left + rect.width/2));
-        const push = 140;
-        let newX = rect.left + Math.cos(angle + Math.PI) * push;
-        let newY = rect.top + Math.sin(angle + Math.PI) * push;
-        
-        newX = Math.max(20, Math.min(window.innerWidth - rect.width - 20, newX));
-        newY = Math.max(20, Math.min(window.innerHeight - rect.height - 20, newY));
-        
-        noBtn.style.left = newX + 'px';
-        noBtn.style.top = newY + 'px';
+      // If cursor is within 150px of the button, make it escape
+      if (distance < 150) {
+        randomizeNoPosition();
       }
     });
 
     // Yes button action
     yesBtn.addEventListener('click', () => {
-      // Hide question
       document.querySelector('h1').style.display = 'none';
       document.querySelector('p').style.display = 'none';
       document.querySelector('.buttons').style.display = 'none';
       
-      // Show photo & message
       photo.style.display = 'block';
       message.style.display = 'block';
       
-      // Extra fun: make hearts go crazy
+      // Hearts go crazy
       setInterval(createHeart, 200);
     });
   </script>
