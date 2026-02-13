@@ -3,38 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valentine's Day</title>
+    <title>Will You Be My Valentine?</title>
     <style>
-        .no-button {
-            position: relative;
-            display: inline-block;
-            margin: 10px;
-            padding: 10px 20px;
-            background-color: red;
-            color: white;
-            border: none;
-            cursor: pointer;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .no-button:hover {
-            position: absolute;
-            transition: 0.3s;
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 60px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 500px;
+            border: 5px solid #ff1744;
+        }
+
+        h1 {
+            color: #d91e63;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .hearts {
+            font-size: 2rem;
+            margin: 20px 0;
+            letter-spacing: 10px;
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 15px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        #yesBtn {
+            background-color: #ff1744;
+            color: white;
+        }
+
+        #yesBtn:hover {
+            background-color: #d91e63;
+            transform: scale(1.1);
+        }
+
+        #noBtn {
+            background-color: #ffb3ba;
+            color: #333;
+            position: fixed;
+        }
+
+        #noBtn:hover {
+            transform: scale(1.05);
+        }
+
+        .message {
+            display: none;
+            margin-top: 30px;
+            font-size: 1.5rem;
+            color: #d91e63;
+            font-weight: bold;
+        }
+
+        .hearts-animation {
+            position: fixed;
+            pointer-events: none;
+            font-size: 2rem;
+            opacity: 0.8;
         }
     </style>
-    <script>
-        document.addEventListener('mouseover', function(e) {
-            if (e.target.classList.contains('no-button')) {
-                const offset = 50;
-                const x = Math.random() * (window.innerWidth - offset);
-                const y = Math.random() * (window.innerHeight - offset);
-                e.target.style.left = x + 'px';
-                e.target.style.top = y + 'px';
-            }
-        });
-    </script>
 </head>
 <body>
-    <h1>Happy Valentine's Day!</h1>
-    <button class="yes-button">Yes</button>
-    <button class="no-button">No</button>
+    <div class="container">
+        <div class="hearts">💕 💖 💗</div>
+        <h1>Will you be my valentine bujji?</h1>
+        <div class="hearts">💕 💖 💗</div>
+        
+        <button id="yesBtn">Yes 💕</button>
+        <button id="noBtn">No 💔</button>
+
+        <div id="message" class="message">
+            Yay! I love you! 🎉💕💕💕
+        </div>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const message = document.getElementById('message');
+
+        // Position the No button initially
+        function randomizeNoPosition() {
+            const maxX = window.innerWidth - noBtn.offsetWidth - 20;
+            const maxY = window.innerHeight - noBtn.offsetHeight - 20;
+
+            let newX = Math.random() * maxX;
+            let newY = Math.random() * maxY;
+
+            newX = Math.max(20, Math.min(maxX, newX));
+            newY = Math.max(20, Math.min(maxY, newY));
+
+            noBtn.style.left = newX + 'px';
+            noBtn.style.top = newY + 'px';
+        }
+
+        // Initialize button position on load
+        window.addEventListener('load', () => {
+            randomizeNoPosition();
+        });
+
+        // Make "No" button run away when cursor gets close
+        document.addEventListener('mousemove', (e) => {
+            const rect = noBtn.getBoundingClientRect();
+            const distance = Math.hypot(
+                e.clientX - (rect.left + rect.width / 2),
+                e.clientY - (rect.top + rect.height / 2)
+            );
+            
+            if (distance < 120) {
+                randomizeNoPosition();
+            }
+        });
+
+        // Yes button click
+        yesBtn.addEventListener('click', () => {
+            message.style.display = 'block';
+            noBtn.style.display = 'none';
+            createHeartAnimation();
+        });
+
+        // Create falling hearts animation
+        function createHeartAnimation() {
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'hearts-animation';
+                    heart.innerHTML = '💕';
+                    heart.style.left = Math.random() * window.innerWidth + 'px';
+                    heart.style.top = '-50px';
+                    document.body.appendChild(heart);
+
+                    let pos = -50;
+                    const interval = setInterval(() => {
+                        pos += 3;
+                        heart.style.top = pos + 'px';
+                        if (pos > window.innerHeight) {
+                            clearInterval(interval);
+                            heart.remove();
+                        }
+                    }, 30);
+                }, i * 100);
+            }
+        }
+    </script>
 </body>
 </html>
